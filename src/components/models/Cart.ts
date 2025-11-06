@@ -1,35 +1,39 @@
-import { IProduct } from '../../types';
+import { IProduct } from "../../types";
 
 export class Cart {
-    private _items: IProduct[] = [];
+    private items: IProduct[] = [];
 
-    getItems(): IProduct[] {
-        return this._items;
+    getCartList(): IProduct[] {
+        return this.items
     }
 
-    addItem(item: IProduct): void {
-        this._items.push(item);
+    addToCart(item: IProduct): void {
+        this.items.push(item);
     }
 
-    removeItem(id: string): void {
-        this._items = this._items.filter(item => item.id !== id);
+    removeFromCart(item: IProduct): void {
+        this.items = this.items.filter(p => p.id !== item.id);
     }
 
-    clear(): void {
-        this._items = [];
+    emptyCart(): void {
+        this.items = [];
     }
 
-    getTotal(): number {
-        return this._items.reduce((total, item) => {
-            return total + (item.price || 0);
+    getCartSum(): number {
+        return this.items.reduce((sum, item) => {
+            return sum + (item.price || 0);
         }, 0);
     }
-
-    getCount(): number {
-        return this._items.length;
+    
+    getCartCount(): number {
+        return this.items.length
     }
 
-    contains(id: string): boolean {
-        return this._items.some(item => item.id === id);
+    getItemAvailability(id: string): boolean {
+        const product = this.items.find(item => item.id === id) || null;
+        if (!product || product.price === null) {
+            return false
+        }
+        return true
     }
 }
