@@ -1,39 +1,39 @@
 import { IProduct } from "../../types";
 
 export class Cart {
-    private items: IProduct[] = [];
+  private items: IProduct[] = [];
 
-    getCartList(): IProduct[] {
-        return this.items
-    }
+  /* Добавлен пустой конструктор (будет полезен позже)*/
+  constructor() {}
 
-    addToCart(item: IProduct): void {
-        this.items.push(item);
-    }
+  getCartList(): IProduct[] {
+    return this.items;
+  }
 
-    removeFromCart(item: IProduct): void {
-        this.items = this.items.filter(p => p.id !== item.id);
-    }
+  addToCart(item: IProduct): void {
+    this.items.push(item);
+  }
 
-    emptyCart(): void {
-        this.items = [];
-    }
+  removeFromCart(item: IProduct): void {
+    this.items = this.items.filter(p => p.id !== item.id);
+  }
 
-    getCartSum(): number {
-        return this.items.reduce((sum, item) => {
-            return sum + (item.price || 0);
-        }, 0);
-    }
-    
-    getCartCount(): number {
-        return this.items.length
-    }
+  emptyCart(): void {
+    this.items = [];
+  }
 
-    getItemAvailability(id: string): boolean {
-        const product = this.items.find(item => item.id === id) || null;
-        if (!product || product.price === null) {
-            return false
-        }
-        return true
-    }
+  getCartSum(): number {
+    return this.items.reduce((sum, item) => {
+      return sum + (item.price || 0);
+    }, 0);
+  }
+
+  getCartCount(): number {
+    return this.items.length;
+  }
+
+  /*Заменён на метод some — возвращает boolean напрямую*/
+  getItemAvailability(id: string): boolean {
+    return this.items.some(item => item.id === id && item.price !== null);
+  }
 }

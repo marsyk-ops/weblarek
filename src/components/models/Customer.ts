@@ -30,7 +30,7 @@ export class Customer implements IBuyer {
         };
     }
 
-    removeUser(): void {
+    clear(): void { /*добавлена очистка данных вместо удаления*/
         this.payment = '';
         this.email = '';
         this.phone = '';
