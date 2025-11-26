@@ -1,12 +1,8 @@
-type EventHandler = (...args: any[]) => void;
-
 export class EventEmitter {
-  private events: { [key: string]: EventHandler[] } = {};
+  private events: { [key: string]: ((...args: any[]) => void)[] } = {};
 
-  on(event: string, callback: EventHandler): void {
-    if (!this.events[event]) {
-      this.events[event] = [];
-    }
+  on(event: string, callback: (...args: any[]) => void): void {
+    if (!this.events[event]) this.events[event] = [];
     this.events[event].push(callback);
   }
 

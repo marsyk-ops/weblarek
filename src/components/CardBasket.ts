@@ -1,32 +1,25 @@
 import { IProduct } from '../types';
-import { BaseCard } from './BaseCard';
 
-const CARD_BASKET_TEMPLATE = `
-  <div class="cart__item card" data-id="{{id}}">
-    <div class="card__category"></div>
-    <img class="card__image" src="" alt="{{title}}">
-    <h3 class="card__title"></h3>
-    <span class="card__price">{{price}} синапсов</span>
-    <button class="cart__button button button_type_icon button_icon_bin"></button>
-  </div>
-`;
+export class CardBasket {
+	constructor(private template: HTMLTemplateElement, private index: number) {}
 
-export class CardBasket extends BaseCard {
-  constructor(product: IProduct, private onDelete: () => void) {
-    const price = product.price !== null ? product.price : 0;
-    const template = CARD_BASKET_TEMPLATE
-      .replace('{{id}}', product.id)
-      .replace('{{title}}', product.title)
-      .replace('{{price}}', String(price));
+	render(product: IProduct, p0: () => void): HTMLElement {
+		const clone = this.template.content.cloneNode(true) as HTMLElement;
 
-    super(template, product);
-  }
+		const title = clone.querySelector('.card__title');
+		if (title) title.textContent = product.title;
 
-  protected setupListeners(element: HTMLElement): void {
-    const deleteBtn = element.querySelector('.cart__button');
-    deleteBtn?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.onDelete();
-    });
-  }
+		const price = clone.querySelector('.card__price');
+		if (price) {
+			price.textContent = product.price !== null
+				? `${product.price} синапсов`
+				: 'Бесценно';
+		}
+
+		const indexEl = clone.querySelector('.basket__item-index');
+		if (indexEl) indexEl.textContent = String(this.index);
+
+		(clone as HTMLElement).dataset.id = product.id;
+		return clone as HTMLElement;
+	}
 }

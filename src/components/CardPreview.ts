@@ -1,60 +1,64 @@
 import { IProduct } from '../types';
-import { BaseCard } from './BaseCard';
+import { categoryMap } from '../utils/constants';
 
-const CARD_PREVIEW_TEMPLATE = `
-  <div class="card" data-id="{{id}}">
-    <button class="card__button button button_type_icon button_icon_close modal__close"></button>
-    <div class="card__category"></div>
-    <img class="card__image" src="" alt="{{title}}">
-    <div class="card__text">
-      <h3 class="card__title"></h3>
-      <p class="card__description">{{description}}</p>
-    </div>
-    <div class="card__price-container">
-      <span class="card__price"></span>
-      <button class="card__button button button_size_m">{{buttonText}}</button>
-    </div>
-  </div>
-`;
+export class CardPreview {
+  constructor(private template: HTMLTemplateElement) {}
 
-export class CardPreview extends BaseCard {
-  constructor(
+  render(
     product: IProduct,
     isInBasket: boolean,
-    private callbacks: {
-      onBuy: () => void;
-      onDelete: () => void;
-    }
-  ) {
-    let buttonText = 'Недоступно';
-    if (product.price !== null) {
-      buttonText = isInBasket ? 'Удалить из корзины' : 'Купить';
+    onClick: () => void
+  ): HTMLElement {
+    const clone = this.template.content.firstElementChild?.cloneNode(true) as HTMLElement;
+
+    if (!clone) {
+      throw new Error('Шаблон карточки просмотра пуст');
     }
 
-    const template = CARD_PREVIEW_TEMPLATE
-      .replace('{{id}}', product.id)
-      .replace('{{title}}', product.title)
-      .replace('{{description}}', product.description || '')
-      .replace('{{buttonText}}', buttonText);
+    // Категория
+    const category = clone.querySelector('.card__category');
+    if (category && product.category) {
+      category.textContent = product.category;
+      category.className = 'card__category';
+      const categoryClass = categoryMap[product.category as keyof typeof categoryMap] || '';
+      category.classList.add(categoryClass);
+    }
 
-    super(template, product);
-  }
+    // Заголовок
+    const title = clone.querySelector('.card__title');
+    if (title) title.textContent = product.title;
 
-  protected setupListeners(element: HTMLElement): void {
-    const button = element.querySelector('.card__button:not(.modal__close)') as HTMLButtonElement;
-    const price = this._product.price;
+    // Описание
+    const text = clone.querySelector('.card__text');
+    if (text) text.textContent = product.description || '';
 
-    if (price === null) {
-      button.disabled = true;
+    // Изображение
+    const image = clone.querySelector('.card__image') as HTMLImageElement | null;
+    if (image) image.src = product.image;
+
+    // Цена и кнопка
+    const price = clone.querySelector('.card__price');
+    const button = clone.querySelector('.card__button') as HTMLButtonElement | null;
+
+    if (product.price === null) {
+      if (button) {
+        button.textContent = 'Недоступно';
+        button.disabled = true;
+      }
+      if (price) price.textContent = 'Бесценно';
     } else {
-      button.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (button.textContent?.includes('Удалить')) {
-          this.callbacks.onDelete();
-        } else {
-          this.callbacks.onBuy();
-        }
-      });
+      if (price) price.textContent = `${product.price} синапсов`;
+      if (button) {
+        button.textContent = isInBasket ? 'Удалить из корзины' : 'В корзину';
+        button.disabled = false;
+        // ⚠️ Обработчик — внутри компонента!
+        button.addEventListener('click', (e) => {
+          e.stopPropagation();
+          onClick(); // вызов коллбэка от презентера
+        });
+      }
     }
+
+    return clone;
   }
 }

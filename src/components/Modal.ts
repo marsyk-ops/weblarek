@@ -1,36 +1,35 @@
 export class Modal {
-  private _element: HTMLElement;
+	private isOpen: boolean = false;
 
-  constructor(container: HTMLElement) {
-    this._element = container;
-    this._element.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target === this._element || target.closest('.modal__close')) {
-        this.close();
-      }
-    });
+	constructor(private container: HTMLElement) {
+		container.addEventListener('click', (e) => {
+			const target = e.target as HTMLElement;
+			if (target === container || target.closest('.modal__close')) {
+				this.close();
+			}
+		});
+	}
 
-    // Запрет прокрутки при открытом модале
-    this._element.addEventListener('wheel', (e) => {
-      e.preventDefault();
-    }, { passive: false });
-  }
+	setContent(element: HTMLElement) {
+		const content = this.container.querySelector('.modal__content');
+		if (content) {
+			content.replaceChildren(element);
+		}
+	}
 
-  setContent(content: HTMLElement): void {
-    const contentSlot = this._element.querySelector('.modal__content');
-    if (contentSlot) {
-      contentSlot.replaceWith(content);
-      content.classList.add('modal__content');
-    }
-  }
+	open() {
+		this.container.classList.add('modal_active');
+		document.body.classList.add('modal-open');
+		this.isOpen = true;
+	}
 
-  open(): void {
-    this._element.classList.add('modal_active');
-    document.body.classList.add('modal-open');
-  }
+	close() {
+		this.container.classList.remove('modal_active');
+		document.body.classList.remove('modal-open');
+		this.isOpen = false;
+	}
 
-  close(): void {
-    this._element.classList.remove('modal_active');
-    document.body.classList.remove('modal-open');
-  }
+	isOpenModal(): boolean {
+		return this.isOpen;
+	}
 }
