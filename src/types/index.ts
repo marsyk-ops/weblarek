@@ -85,6 +85,7 @@ export const EVENTS = {
 
   card: {
     remove: "card:remove",
+    action: "card:action",
   },
 
   basket: {

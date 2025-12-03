@@ -16,7 +16,13 @@ export abstract class Form<T> extends Component<T> {
     this.errorsElement = ensureElement<HTMLElement>(".form__errors", container);
   }
 
+  setErrors(errors: Partial<Record<string, string>>): void {
+    const messages = Object.values(errors).filter(Boolean);
+    this.errorsElement.textContent = messages.join(' ');
+  }
+
   set submitButtonDisabled(state: boolean) {
     this.submitButton.disabled = state;
   }
+
 }

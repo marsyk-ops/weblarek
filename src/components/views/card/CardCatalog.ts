@@ -14,6 +14,9 @@ export class CardCatalog extends Card<TCardCatalog> {
 
   constructor(protected container: HTMLElement, actions?: ICardActions) {
     super(container);
+
+    console.log('Actions:', actions);
+
     this.categoryElement = ensureElement<HTMLElement>(
       ".card__category",
       this.container
@@ -23,8 +26,11 @@ export class CardCatalog extends Card<TCardCatalog> {
       this.container
     );
 
-    if (actions?.onClick) {
-      this.container.addEventListener("click", actions.onClick);
+    if (typeof actions?.onClick === 'function') {
+      this.container.addEventListener("click", (e) => {
+        console.log('Клик по карточке:', e.target);
+        actions.onClick();
+      });
     }
   }
 

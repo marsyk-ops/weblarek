@@ -43,6 +43,8 @@ export class Buyer {
     this.payment = null;
     this.email = "";
     this.phone = "";
+    // ✅ Добавлен эмит при очистке
+    this.events.emit(EVENTS.buyer.clear);
   }
 
   setPayment(payment: TPayment): void {
@@ -67,16 +69,16 @@ export class Buyer {
 
   validate(): TBuyerErrors {
     const errors: TBuyerErrors = {};
-    if (!this.address || this.address === "") {
+    if (!this.address) {
       errors.address = "Не указан адрес";
     }
-    if (!this.email || this.email === "") {
+    if (!this.email) {
       errors.email = "Укажите адрес электронной почты";
     }
     if (!this.payment) {
       errors.payment = "Не выбран способ оплаты";
     }
-    if (!this.phone || this.phone === "") {
+    if (!this.phone) {
       errors.phone = "Не указан номер телефона";
     }
     return errors;

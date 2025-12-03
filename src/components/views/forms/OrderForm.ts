@@ -45,19 +45,9 @@ export class OrderForm extends Form<TOrderFormData> {
     });
   }
 
-  set payment(payment: TPayment) {
-    this.onlineButton.classList.remove("button_alt-active");
-    this.cashButton.classList.remove("button_alt-active");
-
-    if (!payment) {
-      return;
-    }
-
-    if (payment === "online") {
-      this.onlineButton.classList.add("button_alt-active");
-    } else {
-      this.cashButton.classList.add("button_alt-active");
-    }
+  set payment(value: TPayment) {
+    this.onlineButton.classList.toggle('button_alt-active', value === 'online');
+    this.cashButton.classList.toggle('button_alt-active', value === 'cash');
   }
 
   set address(value: string) {

@@ -2,7 +2,6 @@ import { Form } from "./Form";
 import { IBuyer } from "../../../types";
 import { ensureElement } from "../../../utils/utils";
 import { IEvents } from "../../base/Events";
-import { TBuyerErrors } from "../../models/Buyer";
 import { EVENTS } from "../../../types";
 export type TContactsFormData = Pick<IBuyer, "email" | "phone">;
 
@@ -49,8 +48,8 @@ export class ContactsForm extends Form<TContactsFormData> {
     this.phoneInput.value = value;
   }
 
-  setErrors(errors: Partial<TBuyerErrors>): void {
+  /*setErrors(errors: Partial<TBuyerErrors>): void {
     const messages = [errors.email, errors.phone];
     this.errorsElement.textContent = messages.join(" ");
-  }
+  }*/
 }
